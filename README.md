@@ -1,5 +1,9 @@
 # libsp
 
+[![CI](https://github.com/Flatpack-sonc/libsp/actions/workflows/ci.yml/badge.svg)](https://github.com/Flatpack-sonc/libsp/actions/workflows/ci.yml)
+[![Release](https://img.shields.io/github/v/release/Flatpack-sonc/libsp)](https://github.com/Flatpack-sonc/libsp/releases)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+
 C11 library for **UTF-8 strings** and **lexical paths**. Built to stop the usual native path bugs: `PATH_MAX` buffers, mixed ACP/UTF-16, `../` escapes, and embedded NULs.
 
 ```c
@@ -14,19 +18,22 @@ if (!sp_ok(p)) {
 sp_arena_destroy(a);
 ```
 
-## Why
-
-Joining `root + "/" + user` with `snprintf` is a CVE factory. libsp keeps every string length-aware, UTF-8, and arena-allocated, and `sp_path_join_under` refuses anything that would walk out of a trusted root.
-
 ## Install
 
 ```bash
+git clone https://github.com/Flatpack-sonc/libsp.git
+cd libsp
 cmake -B build -DCMAKE_BUILD_TYPE=Release
 cmake --build build
-cmake --install build
+ctest --test-dir build
+cmake --install build   # optional
 ```
 
-Or vendor `include/sp.h` and `src/*.c`. Makefile: `make test SANITIZE=1`.
+Vendor: copy `include/sp.h` and `src/*.c` into your tree.
+
+```bash
+make test SANITIZE=1
+```
 
 ## Paths
 

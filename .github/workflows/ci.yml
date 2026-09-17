@@ -4,21 +4,46 @@ on:
   push:
   pull_request:
 
+permissions:
+  contents: read
+
 jobs:
-  test:
-    runs-on: ubuntu-latest
+  unix:
+    name: ${{ matrix.os }} ${{ matrix.cc }}
+    runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
-        cc: [gcc, clang]
+        include:
+          - os: ubuntu-latest
+            cc: gcc
+          - os: ubuntu-latest
+            cc: clang
+          - os: macos-latest
+            cc: clang
     env:
       CC: ${{ matrix.cc }}
     steps:
       - uses: actions/checkout@v4
       - name: Sanitizer tests
+        if: runner.os == 'Linux'
         run: make clean && make test SANITIZE=1 && make example SANITIZE=1 && make cpp SANITIZE=1
+      - name: Tests
+        if: runner.os != 'Linux'
+        run: make clean && make test && make example && make cpp
       - name: CMake
         run: |
-          cmake -B build -DSP_SANITIZE=ON -DSP_WERROR=ON
+          cmake -B build -DSP_SANITIZE=${{ runner.os == 'Linux' && 'ON' || 'OFF' }} -DSP_WERROR=ON
           cmake --build build
           ctest --test-dir build --output-on-failure
+
+  windows:
+    name: windows msvc
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: CMake
+        run: |
+          cmake -B build -DSP_WERROR=ON
+          cmake --build build --config Release
+          ctest --test-dir build -C Release --output-on-failure

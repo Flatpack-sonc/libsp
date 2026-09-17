@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.0.0
+## 1.0.0 — 2026-09-17
 
 - Arena strings (NUL-terminated, overflow-checked) and UTF-8 / UTF-16 helpers
 - Lexical POSIX and Windows paths, including UNC and `\\?\`
