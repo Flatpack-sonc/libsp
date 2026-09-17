@@ -1,0 +1,13 @@
+build/
+*.o
+*.a
+*.exe
+tests/sp_tests
+tests/sp_cpp
+examples/join_under
+examples/sandbox
+fuzz/fuzz_sp
+fuzz/libfuzzer
+.cache/
+compile_commands.json
+.DS_Store

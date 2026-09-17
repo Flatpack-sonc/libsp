@@ -1,0 +1,24 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        cc: [gcc, clang]
+    env:
+      CC: ${{ matrix.cc }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Sanitizer tests
+        run: make clean && make test SANITIZE=1 && make example SANITIZE=1 && make cpp SANITIZE=1
+      - name: CMake
+        run: |
+          cmake -B build -DSP_SANITIZE=ON -DSP_WERROR=ON
+          cmake --build build
+          ctest --test-dir build --output-on-failure
